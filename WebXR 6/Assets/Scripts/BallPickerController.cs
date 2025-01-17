@@ -1,13 +1,11 @@
 using UnityEngine;
+using System.Collections;
 
 public class BallPickerController : MonoBehaviour
 {
     [Header("Throw Settings")]
     public float throwForceMultiplier = 10f; // Force applied when throwing the ball
     public LayerMask ballLayer; // Layer for the balls
-
-    [Header("Ball Control Settings")]
-    public float ballMoveSpeed = 5f; // Speed of ball movement when controlling it
 
     [Header("Cursor Settings")]
     public Texture2D cursorTexture; // Custom cursor texture
@@ -16,7 +14,7 @@ public class BallPickerController : MonoBehaviour
     private Camera mainCamera;
     private Rigidbody heldBall;
     private bool isHoldingBall = false;
-    private bool isControllingBall = false;
+    private bool canPickUpBall = true; // Flag to control ball pickup
 
     private void Start()
     {
@@ -35,14 +33,9 @@ public class BallPickerController : MonoBehaviour
             HoldBall();
             CheckForThrow();
         }
-        else if (isControllingBall)
+        else if (canPickUpBall)
         {
-            // If controlling the ball, allow horizontal movement
-            ControlBallHorizontal();
-        }
-        else
-        {
-            // If not holding or controlling a ball, check for a ball under the cursor
+            // If not holding a ball and can pick up, check for a ball under the cursor
             CheckForPickup();
         }
     }
@@ -86,29 +79,19 @@ public class BallPickerController : MonoBehaviour
             heldBall.useGravity = true; // Re-enable gravity
             heldBall.AddForce(throwDirection * throwForceMultiplier, ForceMode.Impulse);
 
-            // Release the ball and enable control
+            // Release the ball
+            heldBall = null;
             isHoldingBall = false;
-            isControllingBall = true;
+
+            // Start the cooldown before allowing another pickup
+            StartCoroutine(PickUpCooldown());
         }
     }
 
-    private void ControlBallHorizontal()
+    private IEnumerator PickUpCooldown()
     {
-        if (heldBall != null)
-        {
-            // Get input from the A and D keys (or left and right arrows)
-            float moveInput = Input.GetAxis("Horizontal");
-
-            // Calculate the horizontal movement
-            Vector3 movement = new Vector3(moveInput * ballMoveSpeed * Time.deltaTime, 0, 0);
-
-            // Apply the movement by updating the ball's position
-            heldBall.MovePosition(heldBall.position + movement);
-        }
-        else
-        {
-            // Stop controlling the ball if the reference is lost
-            isControllingBall = false;
-        }
+        canPickUpBall = false;
+        yield return new WaitForSeconds(2f); // Wait for 2 seconds
+        canPickUpBall = true;
     }
 }
