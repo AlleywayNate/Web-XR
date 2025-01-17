@@ -6,8 +6,8 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/Bowling.unity
-    guid: b38ff94962a0fa24e82d1f1b04079939
+    path: Assets/Samples/WebXR Interactions/0.22.0/Sample Scene/Scenes/Desert.unity
+    guid: 85380d4847db7b74a850284461349c36
   m_configObjects:
     WebXR.Settings: {fileID: 11400000, guid: 8a12f261c6475ed44861d748b0ab4568, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
